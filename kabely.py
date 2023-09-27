@@ -6,7 +6,7 @@ class Kabely:
 		if nacti_ze_vstupu:
 			self.nactiZeVstupu()
 		else:
-			self.nactiZeSouboru("TODO")  # TODO
+			self.nactiZeSouboru("C:/Users/Riky/Documents/AutoHotkey/input.txt")
 
 		# print(zadani)
 		# print(zarizeni)
@@ -74,7 +74,7 @@ class Kabely:
 					break
 
 				if pole[poz_x][poz_y] is not False and pole[poz_x][poz_y] != pole[sour2[0]][sour2[1]]:
-					# Když jsou v trase dva stejne lze je obejit TODO
+					# Když jsou v trase dva stejne lze je obejit
 					if pole[poz_x][poz_y] in koliduje:
 						koliduje.remove(pole[poz_x][poz_y])
 						je_dvakrat.append(pole[poz_x][poz_y])
@@ -135,8 +135,25 @@ class Kabely:
 				zarizeni_informace[c].append([int(y), int(x)])
 			self.zarizeni.append(zarizeni_informace)
 
-	def nactiZeSouboru(self, soubor):
-		pass
+	def nactiZeSouboru(self, nazev_souboru):
+		soubor = open(nazev_souboru, "r")
+
+		pocet_zadani = int(soubor.readline())
+
+		# Načtení dat do polí
+		self.zadani = []
+		self.zarizeni = []
+		for i in range(pocet_zadani):
+			self.zadani.append([int(inpt) for inpt in soubor.readline().split(" ")])
+			zarizeni_informace = {}
+			for i2 in range(self.zadani[-1][2]):
+				y, x, c = soubor.readline().split(" ")
+				if c not in zarizeni_informace.keys():
+					zarizeni_informace[c] = []
+				zarizeni_informace[c].append([int(y), int(x)])
+			self.zarizeni.append(zarizeni_informace)
+
+		soubor.close()
 
 
 Kabely(True)
