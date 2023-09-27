@@ -1,14 +1,3 @@
-"""def kdeJeHodnota(seno, jehla, existuje):
-	ret = False
-
-	for a in range(len(seno)):
-		for b in range(len(seno[a])):
-			if seno[a][b] == jehla and a != existuje[0] and b != existuje[1]:
-				ret = [a, b]
-
-	return ret"""
-
-
 class Kabely:
 	def __init__(self, nacti_ze_vstupu):
 		self.zadani = []
@@ -21,6 +10,40 @@ class Kabely:
 
 		# print(zadani)
 		# print(zarizeni)
+
+		self.odpovedi = []
+		for i in range(len(self.zadani)):
+			ajajaj = False
+			h, w, n = self.zadani[i]
+			podlaha = [[False] * (w + 1) for i in range(h + 1)]
+
+			# Nacteni zarizeni do pole
+			for nazev_zarizeni in self.zarizeni[i].keys():
+				for [y, x] in self.zarizeni[i][nazev_zarizeni]:
+					podlaha[y][x] = nazev_zarizeni
+
+			for nazev_zarizeni in self.zarizeni[i].keys():
+				if len(self.zarizeni[i][nazev_zarizeni]) < 2:
+					ajajaj = True
+					continue
+				elif len(self.zarizeni[i][nazev_zarizeni]) > 2:
+					raise "Zarizeni je tu mockrat - " + nazev_zarizeni + ", Cyklus - " + i
+
+				c1, c2 = self.zarizeni[i][nazev_zarizeni]
+				self.jeOkrajVolny(podlaha, c1, c2)
+
+			for p in podlaha:
+				print(p)
+
+			if ajajaj:
+				self.odpovedi.append("ajajaj")
+			else:
+				self.odpovedi.append("pujde to")
+
+		# Vypise odpovedi
+		for odpoved in self.odpovedi:
+			print(odpoved)
+
 	def jeOkrajVolny(self, pole, sour1, sour2):
 		max_delka = len(pole)
 		max_sirka = len(pole[0])
@@ -116,95 +139,4 @@ class Kabely:
 		pass
 
 
-odpovedi = []
-for i in range(len(zadani)):
-	ajajaj = False
-	h, w, n = zadani[i]
-	podlaha = [[False] * (w + 1) for i in range(h + 1)]
-
-	# Nacteni zarizeni do pole
-	for nazev_zarizeni in zarizeni[i].keys():
-		for [y, x] in zarizeni[i][nazev_zarizeni]:
-			podlaha[y][x] = nazev_zarizeni
-
-	for nazev_zarizeni in zarizeni[i].keys():
-		if len(zarizeni[i][nazev_zarizeni]) < 2:
-			ajajaj = True
-			continue
-		elif len(zarizeni[i][nazev_zarizeni]) > 2:
-			raise "Zarizeni je tu mockrat - " + nazev_zarizeni + ", Cyklus - " + i
-
-		c1, c2 = zarizeni[i][nazev_zarizeni]
-		jeOkrajVolny(podlaha, c1, c2)
-
-
-
-
-	# Projde pole od levého horního rohu a najde k zařízením jejich dvojici a cestu
-	"""radek = 0
-	sloupec = 0
-	ajajaj = False
-	prvni_policko = True
-	for velikost in range(max(h, w) + 1):
-		for zvetsit in [[0, 1], [1, 0]]:
-			if velikost * zvetsit[0] < h + 1:
-				radek = velikost * zvetsit[0]
-			if velikost * zvetsit[1] < w + 1:
-				sloupec = velikost * zvetsit[1]
-
-			# Odfiltrovat souradnice [0,0]
-			if radek <= 0 and sloupec <= 0 and not prvni_policko:
-				continue
-			prvni_policko = False
-
-			# Co se na policku nachazi
-			hodnota = pole[radek][sloupec]
-			if hodnota is False or hodnota is True:
-				continue
-
-			# Zjistit jsetli a kde je druha hodnota
-			pozice = kdeJeHodnota(pole, hodnota, [radek, sloupec])
-			if not pozice:
-				# Pokud neni druha hodnota, nelze ulohu splnit
-				ajajaj = True
-				continue
-
-			print(radek, sloupec)
-
-			konec = False
-			for krok in range(max(pozice[0], radek) - min(pozice[0], radek)):
-				if pole[radek + krok][sloupec] == hodnota:
-					konec = True
-					break
-				elif pole[radek + krok][sloupec] is True:
-					print("error")
-					ajajaj = True
-					konec = True
-				pole[radek + krok][sloupec] = True
-
-			if konec:
-				continue
-
-			for krok in range(max(pozice[1], sloupec) - min(pozice[1], sloupec)):
-				if pole[radek][sloupec + krok] == hodnota:
-					konec = True
-					break
-				elif pole[radek][sloupec + krok] is True:
-					print("error")
-					ajajaj = True
-					konec = True
-				pole[radek][sloupec + krok] = True
-
-		if ajajaj:
-			continue"""
-
-	for p in podlaha:
-		print(p)
-
-	if ajajaj:
-		odpovedi.append("ajajaj")
-	else:
-		odpovedi.append("pujde to")
-
-for odpoved in odpovedi:
-	print(odpoved)
+Kabely(True)
