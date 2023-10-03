@@ -12,116 +12,45 @@ class Kabely:
 		# print(zarizeni)
 
 		self.odpovedi = []
-		for i in range(len(self.zadani)):
-			ajajaj = False
-			h, w, n = self.zadani[i]
-			podlaha = [[False] * (w + 1) for i in range(h + 1)]
+		for cyklus in range(len(self.zadani)):
+			aktualni_zarizeni = self.zarizeni[cyklus]
 
-			# Nacteni zarizeni do pole
-			for nazev_zarizeni in self.zarizeni[i].keys():
-				for [y, x] in self.zarizeni[i][nazev_zarizeni]:
-					podlaha[y][x] = nazev_zarizeni
+			konec = False
+			if len(aktualni_zarizeni) % 2:
+				konec = True
 
-			for nazev_zarizeni in self.zarizeni[i].keys():
-				if len(self.zarizeni[i][nazev_zarizeni]) < 2:
-					ajajaj = True
-					continue
-				elif len(self.zarizeni[i][nazev_zarizeni]) > 2:
-					raise Exception("Zarizeni je tu mockrat - " + nazev_zarizeni + ", Cyklus - " + str(i + 1))
+			while len(aktualni_zarizeni) > 0 and not konec:
+				konec = True
+				for i in range(len(aktualni_zarizeni)):
+					if i + 1 < len(aktualni_zarizeni):
+						if aktualni_zarizeni[i] == aktualni_zarizeni[i + 1]:
+							aktualni_zarizeni.pop(i + 1)
+							aktualni_zarizeni.pop(i)
+							konec = False
+							break
+					else:
+						if aktualni_zarizeni[i] == aktualni_zarizeni[0]:
+							aktualni_zarizeni.pop(i)
+							aktualni_zarizeni.pop(0)
+							konec = False
+							break
 
-				c1, c2 = self.zarizeni[i][nazev_zarizeni]
-				if not self.jeOkrajVolny(podlaha, c1, c2):
-					ajajaj = True
-					break
-
-			# for p in podlaha:
-			# 	print(p)
-
-			if ajajaj:
+			if konec:
 				self.odpovedi.append("ajajaj")
 			else:
 				self.odpovedi.append("pujde to")
+
+			print(cyklus)
+			if cyklus == 13:
+				print(14)
 
 		# Vypise odpovedi
 		for odpoved in self.odpovedi:
 			print(odpoved)
 
-	def jeOkrajVolny(self, pole, sour1, sour2):
-		max_delka = len(pole)
-		max_sirka = len(pole[0])
-
-		lze_projit = False
-		druhy_smer = False
-		for cyklus in range(2):
-			poz_x, poz_y = sour1
-			zmena_x, zmena_y = 0, 0
-
-			if poz_x <= 0:
-				zmena_y = -1 if druhy_smer else 1
-			elif poz_x >= max_delka - 1:
-				zmena_y = 1 if druhy_smer else -1
-			elif poz_y <= 0:
-				zmena_x = 1 if druhy_smer else -1
-			elif poz_y >= max_sirka - 1:
-				zmena_x = -1 if druhy_smer else 1
-
-			koliduje = []
-			je_dvakrat = []  # Zařízení které jsou mezi hledanými zařízeními dvakrát
-			for q in range(2 * (max_sirka + max_delka)):
-				if [poz_x, poz_y] == sour2:
-					lze_projit = True
-					break
-
-				if pole[poz_x][poz_y] is not False and pole[poz_x][poz_y] != pole[sour1[0]][sour1[1]]:
-					# Když jsou v trase dva stejne lze je obejit
-					if pole[poz_x][poz_y] in koliduje:
-						koliduje.remove(pole[poz_x][poz_y])
-						je_dvakrat.append(pole[poz_x][poz_y])
-					else:
-						koliduje.append(pole[poz_x][poz_y])
-
-				if poz_x in [0, max_delka - 1] and poz_y in [0, max_sirka - 1]:
-					zmena_x = 0
-					zmena_y = 0
-
-				if poz_x <= 0 and poz_y <= 0:
-					if not druhy_smer:
-						zmena_y = 1
-					else:
-						zmena_x = 1
-
-				if poz_x <= 0 and poz_y >= max_sirka - 1:
-					if not druhy_smer:
-						zmena_x = 1
-					else:
-						zmena_y = -1
-
-				if poz_x >= max_delka - 1 and poz_y >= max_sirka - 1:
-					if not druhy_smer:
-						zmena_y = -1
-					else:
-						zmena_x = -1
-
-				if poz_x >= max_delka - 1 and poz_y <= 0:
-					if not druhy_smer:
-						zmena_x = -1
-					else:
-						zmena_y = 1
-
-				poz_x += zmena_x
-				poz_y += zmena_y
-
-			if lze_projit and len(koliduje) > 0:
-				lze_projit = False
-
-			if lze_projit:
-				break
-			elif not druhy_smer:
-				druhy_smer = True
-
-		return lze_projit
-
 	def nactiZeVstupu(self):
+		print("funcion deparced")
+		exit()
 		pocet_zadani = int(input())
 
 		# Načtení dat do polí
@@ -142,20 +71,35 @@ class Kabely:
 
 		pocet_zadani = int(soubor.readline().rstrip('\n'))
 
-		# Načtení dat do polí
 		self.zadani = []
 		self.zarizeni = []
 		for i in range(pocet_zadani):
 			self.zadani.append([int(inpt) for inpt in soubor.readline().rstrip('\n').split(" ")])
+
+			max_delka = self.zadani[-1][1]
+			max_sirka = self.zadani[-1][0]
+
 			zarizeni_informace = {}
 			for i2 in range(self.zadani[-1][2]):
 				y, x, c = soubor.readline().rstrip('\n').split(" ")
+				y, x = int(y), int(x)
 
-				if c not in zarizeni_informace.keys():
-					zarizeni_informace[c] = []
+				# Horní řádek
+				if y == 0:
+					zarizeni_informace[x] = c
 
-				zarizeni_informace[c].append([int(y), int(x)])
-			self.zarizeni.append(zarizeni_informace)
+				# Pravý sloupeček
+				elif x == max_delka:
+					zarizeni_informace[max_delka + y] = c
+
+				# Dolní řádek
+				elif y == max_sirka:
+					zarizeni_informace[max_sirka + max_delka + max_sirka - x] = c
+
+				# Levý sloupeček
+				elif x == 0:
+					zarizeni_informace[max_sirka + max_delka + max_sirka + max_delka - y] = c
+			self.zarizeni.append(list(dict(sorted(zarizeni_informace.items())).values()))
 
 		soubor.close()
 
